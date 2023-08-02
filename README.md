@@ -1,4 +1,4 @@
-виртуальные машины в стенде: centralRouter, inetRouter, inetRouter2, centralServer
+виртуальные машины в стенде: centralRouter, inetRouter, inetRouter2, centralServer<br>
 <b>Задачи:</b><br><br>
 реализовать knocking port<br>
 <br>
