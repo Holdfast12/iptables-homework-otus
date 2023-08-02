@@ -1,41 +1,42 @@
 # -*- mode: ruby -*-
 # vim: set ft=ruby :
-GLOBAL_VARS ={}
+
+GLOBAL_VARS ={local_repo: '10.0.0.2'}
+
 MACHINES = {
-  :inet1Router => {
+
+  :inetRouter => {
     :box_name => "almalinux/9",
     :net => [
-      {adapter: 2, auto_config: false, virtualbox__intnet: "router-net"},
-      {adapter: 3, auto_config: false, virtualbox__intnet: "router-net"},
-      {ip: '192.168.56.10', adapter: 8},
+      {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet"},
     ],
-    :vars => {bond_ip: '192.168.255.1'}
+    :vars => {}
   },
-  :inet2Router => {
+
+  :inetRouter2 => {
     :box_name => "almalinux/9",
     :net => [
-      {adapter: 2, auto_config: false, virtualbox__intnet: "testLAN"},
-      {ip: '192.168.56.32', adapter: 8},
+      {ip: '192.168.255.5', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet2"},
     ],
-    :vars => {vlan_id: 2, vlan_ip: '10.10.10.1'}
+    :vars => {}
   },
   
   :centralRouter => {
     :box_name => "almalinux/9",
     :net => [
-      {adapter: 2, auto_config: false, virtualbox__intnet: "testLAN"},
-      {ip: '192.168.56.32', adapter: 8},
+      {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet"},
+      {ip: '192.168.255.6', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "central-inet2"},
+      {ip: '192.168.0.1', adapter: 4, netmask: "255.255.255.252", virtualbox__intnet: "central-server"},
     ],
-    :vars => {vlan_id: 2, vlan_ip: '10.10.10.1'}
+    :vars => {}
   },
   
   :centralServer => {
     :box_name => "almalinux/9",
     :net => [
-      {adapter: 2, auto_config: false, virtualbox__intnet: "testLAN"},
-      {ip: '192.168.56.32', adapter: 8},
+      {ip: '192.168.0.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-server"},
     ],
-    :vars => {vlan_id: 2, vlan_ip: '10.10.10.1'}
+    :vars => {}
   },
 }
 
@@ -51,6 +52,9 @@ Vagrant.configure("2") do |config|
       box.vm.host_name = boxname.to_s
       boxconfig[:net].each do |ipconf|
         box.vm.network "private_network", **ipconf
+      end
+      if boxname.to_s == "inetRouter2"
+        box.vm.network "forwarded_port", guest: 8080, guest_ip: "192.168.255.5", host: 8888, host_ip: "127.0.0.1",  protocol: "tcp"
       end
       box.vm.provision "ansible" do |ansible|
         ansible.compatibility_mode = "2.0"
