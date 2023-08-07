@@ -2,36 +2,16 @@
   timezone:
     name: Europe/Moscow
 
-- name: install base tools almalinux
-  block:
-    - name: update cache
-      ansible.builtin.dnf:
-        update_cache: yes
 
-    - name: Install base tools
-      ansible.builtin.dnf:
-        name:
-        - glibc-langpack-ru
-        - vim
-        - traceroute
-        - tcpdump
-        - net-tools
-        state: latest
-  when: (ansible_os_family == "RedHat")
+- name: update cache
+  ansible.builtin.yum:
+    update_cache: true
 
-- name: install base tools ubuntu
-  block:
-    - name: update cache
-      ansible.builtin.apt:
-        update_cache: yes
+- name: Install base tools
+  ansible.builtin.yum:
+    name:
+    - vim
+    - traceroute
+    - tcpdump
+    state: latest
 
-    - name: Install base tools on ubuntu/jammy64
-      ansible.builtin.apt:
-        name:
-        - language-pack-ru-base
-        - vim
-        - traceroute
-        - tcpdump
-        - net-tools
-        state: latest
-  when: (ansible_os_family == "Debian")

@@ -6,7 +6,7 @@ GLOBAL_VARS ={local_repo: '10.0.0.2'}
 MACHINES = {
 
   :inetRouter => {
-    :box_name => "almalinux/9",
+    :box_name => "centos/7",
     :net => [
       {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet"},
     ],
@@ -14,7 +14,7 @@ MACHINES = {
   },
 
   :inetRouter2 => {
-    :box_name => "almalinux/9",
+    :box_name => "centos/7",
     :net => [
       {ip: '192.168.255.5', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet2"},
     ],
@@ -22,7 +22,7 @@ MACHINES = {
   },
   
   :centralRouter => {
-    :box_name => "almalinux/9",
+    :box_name => "centos/7",
     :net => [
       {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-inet"},
       {ip: '192.168.255.6', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "central-inet2"},
@@ -32,7 +32,7 @@ MACHINES = {
   },
   
   :centralServer => {
-    :box_name => "almalinux/9",
+    :box_name => "centos/7",
     :net => [
       {ip: '192.168.0.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "central-server"},
     ],
@@ -63,6 +63,9 @@ Vagrant.configure("2") do |config|
         ansible.host_key_checking = "false"
         ansible.become = "true"
         ansible.limit = "all"
+        ansible.groups = {
+          'routers' => ['inetRouter', 'inetRouter2', 'centralRouter']
+        }
       end
     end
   end
