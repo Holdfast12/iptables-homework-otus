@@ -1,0 +1,26 @@
+- name: install nginx
+  block:
+
+    - name: Install epel-release
+      ansible.builtin.yum:
+        name:
+        - epel-release
+        state: latest
+
+    - name: update cache
+      ansible.builtin.yum:
+        update_cache: true
+
+    - name: Install nginx from repo
+      ansible.builtin.yum:
+        name:
+        - nginx
+        state: latest
+
+    - name: start and enable iptables service
+      service: 
+          name: nginx
+          state: started
+          enabled: true
+
+  when: (ansible_hostname == "centralServer")
