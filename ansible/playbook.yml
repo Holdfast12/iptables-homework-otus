@@ -5,4 +5,5 @@
     - common
     - routing
     - nginx
+    - knock-script
 ...

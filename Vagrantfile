@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
         box.vm.network "private_network", **ipconf
       end
       if boxname.to_s == "inetRouter2"
-        box.vm.network "forwarded_port", guest: 8080, guest_ip: "192.168.255.5", host: 8888, host_ip: "127.0.0.1",  protocol: "tcp"
+        box.vm.network "forwarded_port", guest: 8080, host: 8888,  protocol: "tcp"
       end
       box.vm.provision "ansible" do |ansible|
         ansible.compatibility_mode = "2.0"

@@ -20,17 +20,35 @@
         owner: root
         group: root
         mode: 0600
+      when: (ansible_hostname == "inetRouter")
+
+    - name: copy inetRouter2_iptables config
+      template: 
+        src: inetRouter2_iptables
+        dest: /etc/sysconfig/iptables
+        owner: root
+        group: root
+        mode: 0600
+      when: (ansible_hostname == "inetRouter2")
 
     - name: start and enable iptables service
       service: 
           name: iptables
           state: restarted
           enabled: true
-  when: (ansible_hostname == "inetRouter")
+  when: (ansible_hostname == "inetRouter" or ansible_hostname == "inetRouter2")
 
 - name: set up forward packages across routers
   sysctl:
     name: net.ipv4.conf.all.forwarding
+    value: '1'
+    state: present
+    reload: true
+  when: "'routers' in group_names"
+
+- name: set up forward packages across routers
+  sysctl:
+    name: net.ipv4.ip_forward
     value: '1'
     state: present
     reload: true

@@ -1,0 +1,33 @@
+- name: setup for knock-script
+  block:
+    - name: install nmap
+      yum:
+        name:
+        - nmap
+        state: latest
+
+    - name: copy knock-script
+      template: 
+        src: knock-script
+        dest: /home/vagrant/knock-script.sh
+        owner: vagrant
+        group: vagrant
+        mode: 0755
+
+  when: (ansible_hostname == "centralRouter")
+
+- name: copy iptables config
+  block:
+    - name: copy iptables config
+      template: 
+        src: inetRouter_iptables
+        dest: /etc/sysconfig/iptables
+        owner: root
+        group: root
+        mode: 0600
+    - name: restart iptables service
+      service: 
+          name: iptables
+          state: restarted
+          enabled: true
+  when: (ansible_hostname == "inetRouter")
